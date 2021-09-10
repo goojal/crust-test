@@ -15,6 +15,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: 'npm'
 
       - name: Install
         run: npm install
@@ -28,6 +29,8 @@ jobs:
         with:
           path: './build'
           seeds: ${{ secrets.CRUST_SEEDS }}
+
+      - run: echo ${{ steps.uploadsite.outputs.hash }}
       
       - name: Pin to Crust
         id: pintocrust
