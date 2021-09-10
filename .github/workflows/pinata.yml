@@ -1,0 +1,42 @@
+name: Build and Pin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  buildnpin:
+    name: Build and Pin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'npm'
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: PUBLIC_URL=./ npm run build
+      
+      - name: Upload to crustwebsites
+        uses: aquiladev/ipfs-action@v1
+        id: uploadsite
+        with:
+          path: './build'
+          service: pinata
+          pinataKey: ${{ secrets.PINATA_KEY }}
+          pinataSecret: ${{ secrets.PINATA_SECRET }}
+
+      - run: echo ${{ steps.uploadsite.outputs.hash }}
+      
+      - name: Pin to Crust
+        id: pintocrust
+        uses: crustio/ipfs-crust-action@v2.0.3
+        with:
+          cid: ${{ steps.uploadsite.outputs.hash }}
+          seeds: ${{ secrets.CRUST_SEEDS }}
