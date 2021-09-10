@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  buildnpin:
+    name: Build and Pin
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,13 +21,6 @@ jobs:
 
       - name: Build
         run: PUBLIC_URL=./ npm run build
-
-  pin:
-    name: Pin
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
       
       - name: Upload to crustwebsites
         uses: crustio/ipfs-upload-action@v2.0.0
