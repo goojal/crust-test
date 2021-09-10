@@ -1,4 +1,4 @@
-name: Build and Pin
+name: Build and Pin using Crust
 
 on:
   workflow_dispatch:
@@ -35,6 +35,8 @@ jobs:
       - name: Pin to Crust
         id: pintocrust
         uses: crustio/ipfs-crust-action@v2.0.3
+        continue-on-error: true
+        timeout-minutes: 2
         with:
           cid: ${{ steps.uploadsite.outputs.hash }}
           seeds: ${{ secrets.CRUST_SEEDS }}
