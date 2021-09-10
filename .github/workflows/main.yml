@@ -1,0 +1,41 @@
+name: Build and Pin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build
+        run: PUBLIC_URL=./ npm run build
+
+  pin:
+    name: Pin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      
+      - name: Upload to crustwebsites
+        uses: crustio/ipfs-upload-action@v2.0.0
+        id: uploadsite
+        with:
+          path: './build'
+          seeds: ${{ secrets.CRUST_SEEDS }}
+      
+      - name: Pin to Crust
+        id: pintocrust
+        uses: crustio/ipfs-crust-action@v2.0.3
+        with:
+          cid: ${{ steps.uploadsite.outputs.hash }}
+          seeds: ${{ secrets.CRUST_SEEDS }}
